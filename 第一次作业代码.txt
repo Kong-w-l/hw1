@@ -1,0 +1,142 @@
+主程序
+clc
+ 
+Im = imread('lena.bmp');
+Im2 = imread('elain1.bmp');
+ 
+%逐级递减的灰度图像
+figure(1);
+subplot(2 ,4, 1);
+imshow(Im);
+title('原始图像');
+    
+for i = 1 : 1 : 7
+    subplot(2 ,4 ,i+1);
+    imshow(reduce_gray(Im ,i),[0,power(2 ,8-i)-1]);
+    title(sprintf('%d级灰度图像',power(2 ,8-i)));
+end
+ 
+%快速计算图像均值与方差的方法
+Im1 = double(Im);
+aver = mean2(Im1)
+sqr = var(Im1 (:))
+ 
+% aver = average(Im);  %计算图像的均值
+% sqr = variance(Im);  %计算图像的方差
+ 
+%对lena图像放大
+figure(2);
+subplot(1,3,1);
+lena_near=imresize(Im,[2048,2048],'nearest');
+imshow(lena_near);
+title('nearest');
+ 
+subplot(1,3,2);
+lena_linear=imresize(Im,[2048,2048],'bilinear');
+imshow(lena_linear);
+title('bilinear');
+ 
+subplot(1,3,3);
+lena_cubic=imresize(Im,[2048,2048],'bicubic');
+imshow(lena_cubic);
+title('bicubic');
+ 
+%分别对lena和elain1进行水平错切和旋转30度
+tform=maketform('affine',[1,0.5,0;0,1,0;0,0,1]);
+Lena1=imtransform(Im,tform);
+Elain11=imtransform(Im2,tform);
+ 
+Lena2=imrotate(Im,30);
+Elain12=imrotate(Im2,30);
+ 
+figure(3);
+subplot(2,2,1);
+imshow(Lena1);
+title('lena的错切');
+ 
+subplot(2,2,2);
+imshow(Elain11);
+title('elain1的错切');
+ 
+subplot(2,2,3);
+imshow(Lena2);
+title('lena旋转30度');
+ 
+subplot(2,2,4);
+imshow(Elain12);
+title('elain1旋转30度');
+ 
+figure(4);
+subplot(2,3,1);
+L11=imresize(Lena1,[2048,2048],'nearest');
+imshow(L11);
+title('shear nearest');
+ 
+subplot(2,3,2);
+L12=imresize(Lena1,[2048,2048],'bilinear');
+imshow(L12);
+title('shear bilinear');
+ 
+subplot(2,3,3);
+L13=imresize(Lena1,[2048,2048],'bicubic');
+imshow(L13);
+title('shear bicubic');
+ 
+subplot(2,3,4);
+L21=imresize(Lena2,[2048,2048],'nearest');
+imshow(L21);
+title('rotate nearest');
+ 
+subplot(2,3,5);
+L22=imresize(Lena2,[2048,2048],'bilinear');
+imshow(L22);
+title('rotate bilinear');
+ 
+subplot(2,3,6);
+L23=imresize(Lena2,[2048,2048],'bicubic');
+imshow(L23);
+title('rotate bicubic');
+ 
+figure(5);
+subplot(2,3,1);
+E11=imresize(Elain11,[2048,2048],'nearest');
+imshow(E11);
+title('shear nearest');
+ 
+subplot(2,3,2);
+E12=imresize(Elain11,[2048,2048],'bilinear');
+imshow(E12);
+title('shear bilinear');
+ 
+subplot(2,3,3);
+E13=imresize(Elain11,[2048,2048],'bicubic');
+imshow(E13);
+title('shear bicubic');
+ 
+subplot(2,3,4);
+E21=imresize(Elain12,[2048,2048],'nearest');
+imshow(E21);
+title('rotate nearest');
+ 
+subplot(2,3,5);
+E22=imresize(Elain12,[2048,2048],'bilinear');
+imshow(E22);
+title('rotate bilinear');
+ 
+subplot(2,3,6);
+E23=imresize(Elain12,[2048,2048],'bicubic');
+imshow(E23);
+title('rotate bicubic');
+
+灰度降低函数
+function new_image = reduce_gray(image , level)
+ 
+[m,n]=size(image);
+new_image=zeros(m,n);
+de_level = uint8(power(2 , level));
+for x=1:m
+    for y=1:n
+        new_image(x,y)=floor(image(x,y)/de_level);
+    end
+end
+return
